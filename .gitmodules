@@ -1,0 +1,3 @@
+[submodule "tridiagonal-matrix"]
+	path = tridiagonal-matrix
+	url = https://github.com/mauriciokugler/tridiagonal-matrix
