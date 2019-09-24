@@ -22,7 +22,7 @@ float interpolate(float x, float y);
 
 The 2D interpolation calculates and stores the B-spline coefficients of the *x*-axis, solving a single linear system for each new query point.
 
-This project uses a **submodule** for the calculation of tridiagonal system of equations. When cloning the repository, add a symbolic link to the respective subdirectory.
+This project uses a **submodule** for the calculation of tridiagonal system of equations. When cloning the repository, update the submodule and add a symbolic link to the respective subdirectory.
 
 ## Example
 
