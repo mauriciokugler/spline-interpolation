@@ -1,6 +1,6 @@
 # C++ B-Spline Interpolation
 
-Yet another C++ implementation for [B-spline](https://en.wikipedia.org/wiki/B-spline) [interpolation](https://en.wikipedia.org/wiki/Spline_interpolation). These classes provides simple and efficient methods for 1D & 2D data B-spline interpolation in regular grids.
+Yet another C++ implementation of [B-spline](https://en.wikipedia.org/wiki/B-spline) [interpolation](https://en.wikipedia.org/wiki/Spline_interpolation). These classes provides simple and efficient methods for 1D & 2D data B-spline interpolation in regular grids.
 
 ## Usage
 
