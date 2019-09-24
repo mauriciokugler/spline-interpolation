@@ -20,7 +20,9 @@ float interpolate(float x);
 float interpolate(float x, float y);
 ```
 
-The 2D interpolation calculates and stores the B-spline coefficients of the *x*-axis, solving a single linear system for each new query point. 
+The 2D interpolation calculates and stores the B-spline coefficients of the *x*-axis, solving a single linear system for each new query point.
+
+This project uses a **submodule** for the calculation of tridiagonal system of equations. When cloning the repository, add a symbolic link to the respective subdirectory.
 
 ## Example
 
@@ -54,9 +56,9 @@ int main(void)
 }
 ```
 
-The following plot shows the interpolated curve calculated from 10 initial points:
+The following plot shows the interpolated curve calculated from 9 original points:
 
-<img src="bspline_1d.png" alt="drawing" width="500"/>
+<img src="bspline1d.png" alt="drawing" width="500"/>
 
 The `example2.cpp` file contains a simple example of a 2D interpolation of a random surface:
 
@@ -97,9 +99,9 @@ int main(void)
 }
 ```
 
-The following plot shows the interpolated surface calculated from a grid of 20&#215;30 initial points:
+The following plot shows the interpolated surface calculated from a grid of 5&#215;5 initial points:
 
-<img src="bspline_2d.png" alt="drawing" width="500"/>
+<img src="bspline2d.png" alt="drawing" width="500"/>
 
 The [OpenMP](https://en.wikipedia.org/wiki/OpenMP) parallelization is optional, but has critical impact on the code's performance. 
 
