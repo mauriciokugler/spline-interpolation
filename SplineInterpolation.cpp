@@ -4,11 +4,12 @@
 #include <math.h>
 
 const float s = (float)1/6;
+const unsigned int r = 4;
+const unsigned int R = 2*r;
 
-SplineInterpolation1D::SplineInterpolation1D(float *x, float *v, unsigned int n)
+SplineInterpolation1D::SplineInterpolation1D(float *v, unsigned int n)
 {
 	N = n;
-	C = x;
 
 	T = new TridiagonalMatrix(N, s, 4*s, s);
 	W = T->system(v);
@@ -21,11 +22,11 @@ SplineInterpolation1D::~SplineInterpolation1D()
 
 float SplineInterpolation1D::interpolate(float x)
 {
-	int p = (int)fmin(fmax(roundf(x), 2), N-3);
+	int p = (int)fmin(fmax(roundf(x),2),N-3);
 
 	float h = 0;
 	for(int j=p-2;j<=p+2;j++) {
-		h += W[j] * spline(x-C[j]);
+		h += W[j] * spline(x-j);
 	}
 
 	return(h);
@@ -61,20 +62,18 @@ float inline SplineInterpolation1D::spline(float x)
 	}
 }
 
-SplineInterpolation2D::SplineInterpolation2D(float *x, float *y, float **v, unsigned int n, unsigned int m)
+SplineInterpolation2D::SplineInterpolation2D(float **v, unsigned int n, unsigned int m)
 {
 	N = n;
 
-	C = y;
-
 	G = new SplineInterpolation1D*[N];
-	D = new float[N];
+	D = new float[R];
 
 	B = NULL;
 
 	#pragma omp parallel for
 	for(int i=0;i<(int)N;i++) {
-		G[i] = new SplineInterpolation1D(x, v[i], m);
+		G[i] = new SplineInterpolation1D(v[i], m);
 	}
 }
 
@@ -89,15 +88,18 @@ SplineInterpolation2D::~SplineInterpolation2D()
 
 float SplineInterpolation2D::interpolate(float x, float y)
 {
+	unsigned int j = (unsigned int)fmaxf(0,floorf(x)-r+1);
+	if(R>N-j || j>N) j = N-R;
+	
 	#pragma omp parallel for
-	for(int i=0;i<(int)N;i++) {
-		D[i] = G[i]->interpolate(x);
+	for(int i=0;i<(int)R;i++) {
+		D[i] = G[i+j]->interpolate(y);
 	}
 
-	if(B==NULL) B = new SplineInterpolation1D(C,D,N);
+	if(B==NULL) B = new SplineInterpolation1D(D,R);
 	else B->update(D);
 
-	float h = B->interpolate(y);
+	float h = B->interpolate(x-j);
 
 	return(h);
 }

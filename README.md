@@ -7,11 +7,11 @@ Yet another C++ implementation of [B-spline](https://en.wikipedia.org/wiki/B-spl
 The 1D & 2D B-spline interpolation objects can be instantiated with the following constructors:
 
 ```C++
-SplineInterpolation1D(float *x, float *v, unsigned int n);
-SplineInterpolation2D(float *x, float *y, float **v, unsigned int n, unsigned int m);
+SplineInterpolation1D(float *v, unsigned int n);
+SplineInterpolation2D(float **v, unsigned int n, unsigned int m);
 ```
 
-For the 1D interpolation, the vector *x* contain *n* sample points, while the array *v* contains the corresponding values. For the 2D interpolation, vectors *x* and *y*, containing the 2-axis sampling coordinates, have, respectively, *n* and *m* points, while the array of corresponding values *v* has size *n*&#215;*m*.
+The class assumes the sample points to be distributed in a regular grid of unit intervals. For the 1D interpolation, the vector *v* contains the *n* corresponding values, while for the 2D interpolation, the array of corresponding values *v* has size *n*&#215;*m*.
 
 The value of query points *u(x)* and *u(x,y)* are calculated with the following methods:   
 
@@ -20,7 +20,11 @@ float interpolate(float x);
 float interpolate(float x, float y);
 ```
 
-The 2D interpolation calculates and stores the B-spline coefficients of the *x*-axis, solving a single linear system for each new query point.
+The 2D interpolation calculates and stores the B-spline coefficients of the *x*-axis, solving a single linear system for each new query point. This linear system uses 4 values before and after the query point in order to calculate its value. This can be adjusted by changing the following constant:
+
+```C++
+const unsigned int r = 4;
+```
 
 This project uses a **submodule** for the calculation of tridiagonal system of equations. When cloning the repository, update the submodule and add a symbolic link to the respective subdirectory.
 
@@ -36,15 +40,13 @@ int main(void)
 {
   unsigned int n = 10;
 
-  float *y = new float[n];
   float *v = new float[n];
 
   for(unsigned int i=0;i<n;i++) {
-    y[i] = (float)i;
     v[i] = ((float)rand()/RAND_MAX)*2-1;
   }
 
-  SplineInterpolation1D *SPL = new SplineInterpolation1D(y,v,n);
+  SplineInterpolation1D *SPL = new SplineInterpolation1D(v,n);
 
   float x = ((float)rand()/RAND_MAX) * (n-1);
 
@@ -58,7 +60,7 @@ int main(void)
 
 The following plot shows the interpolated curve calculated from 9 original points:
 
-<img src="bspline1d.png" alt="drawing" width="500"/>
+<img src="bspline1d.png" alt="1D B-spline" width=500/>
 
 The `example2.cpp` file contains a simple example of a 2D interpolation of a random surface:
 
@@ -72,12 +74,6 @@ int main(void)
   unsigned int n = 30;
   unsigned int m = 20;
 
-  float *x = new float[n];
-  float *y = new float[m];
-
-  for(unsigned int i=0;i<n;i++) x[i] = (float)i;
-  for(unsigned int j=0;j<m;j++) y[j] = (float)j;
-
   float **v = new float*[n];
   for(unsigned int i=0;i<n;i++) {
     v[i] = new float[m];
@@ -86,12 +82,12 @@ int main(void)
     }
   }
 
-  SplineInterpolation2D *SPL = new SplineInterpolation2D(x, y, v, n, m);
+  SplineInterpolation2D *SPL = new SplineInterpolation2D(v, n, m);
 
-  float p = ((float)rand()/RAND_MAX) * (n-1);
-  float q = ((float)rand()/RAND_MAX) * (m-1);
+  float x = ((float)rand()/RAND_MAX) * (n-1);
+  float y = ((float)rand()/RAND_MAX) * (m-1);
 
-  float u = SPL->interpolate(p, q);
+  float u = SPL->interpolate(x,y);
 
   delete SPL;
 
@@ -101,7 +97,7 @@ int main(void)
 
 The following plot shows the interpolated surface calculated from a grid of 5&#215;5 initial points:
 
-<img src="bspline2d.png" alt="drawing" width="500"/>
+<img src="bspline2d.png" alt="2D B-spline" width=500/>
 
 The [OpenMP](https://en.wikipedia.org/wiki/OpenMP) parallelization is optional, but has critical impact on the code's performance. 
 
@@ -113,7 +109,7 @@ The [OpenMP](https://en.wikipedia.org/wiki/OpenMP) parallelization is optional, 
   title = "C++ B-Spline Interpolation",
   year = "2019",
   url = "https://github.com/mauriciokugler/spline-interpolation",
-  note = "Version 1.0.0"
+  note = "Version 1.1.0"
 }
 ```
 

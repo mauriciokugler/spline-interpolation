@@ -12,8 +12,6 @@ friend class SplineInterpolation2D;
 private:
 
 	unsigned int N;
-
-	float *C;
 	float *W;
 
 	TridiagonalMatrix *T;
@@ -26,7 +24,7 @@ protected:
 
 public:
 
-	SplineInterpolation1D(float *x, float *v, unsigned int n);
+	SplineInterpolation1D(float *v, unsigned int n);
 	~SplineInterpolation1D();
 
 	float interpolate(float x);
@@ -38,8 +36,6 @@ class SplineInterpolation2D
 private:
 
 	unsigned int N;
-
-	float *C;
 	float *D;
 
 	SplineInterpolation1D **G;
@@ -47,7 +43,7 @@ private:
 
 public:
 
-	SplineInterpolation2D(float *x, float *y, float **v, unsigned int n, unsigned int m);
+	SplineInterpolation2D(float **v, unsigned int n, unsigned int m);
 	~SplineInterpolation2D();
 
 	float interpolate(float x, float y);
